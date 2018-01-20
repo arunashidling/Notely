@@ -20,10 +20,11 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import static com.pe.notes.ui.R.id.nav_bar;
 import static com.pe.notes.ui.R.id.nav_close;
-import static com.pe.notes.ui.R.id.nav_home;
-import static com.pe.notes.ui.R.id.nav_pool;
+import static com.pe.notes.ui.R.id.nav_favourite;
+import static com.pe.notes.ui.R.id.nav_hearted;
+import static com.pe.notes.ui.R.id.nav_poem;
+import static com.pe.notes.ui.R.id.nav_story;
 
 
 public class MainActivity extends AppCompatActivity
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity
 
     CoordinatorLayout contentView;
     NavigationView navigationView2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,16 +59,16 @@ public class MainActivity extends AppCompatActivity
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MenuItem home = navigationView2.getMenu().findItem(nav_home);
+                MenuItem home = navigationView2.getMenu().findItem(nav_hearted);
                 CompoundButton isHome = (CompoundButton) MenuItemCompat.getActionView(home);
 
-                MenuItem bar = navigationView2.getMenu().findItem(nav_bar);
+                MenuItem bar = navigationView2.getMenu().findItem(nav_favourite);
                 CompoundButton isBar = (CompoundButton) MenuItemCompat.getActionView(bar);
 
-                if(isHome.isChecked()){
+                if (isHome.isChecked()) {
                     Log.i("NOtely", "Filter home true");
                 }
-                if(isBar.isChecked()){
+                if (isBar.isChecked()) {
                     Log.i("NOtely", "Filter bar true");
                 }
 
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer,  R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+                this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
 
-        MenuItem switchItem = navigationView2.getMenu().findItem(nav_home);
+        MenuItem switchItem = navigationView2.getMenu().findItem(nav_hearted);
         CompoundButton switchView = (CompoundButton) MenuItemCompat.getActionView(switchItem);
         switchView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -116,9 +118,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else if (drawer.isDrawerOpen(GravityCompat.END)) {
+         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
             super.onBackPressed();
@@ -156,38 +156,44 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         String text = "";
-        if(id != nav_close){
+        if (id != nav_close) {
             CompoundButton switchView = (CompoundButton) MenuItemCompat.getActionView(item);
 
-            if (id == nav_home) {
-                text = "home";
+            if (id == nav_hearted) {
+                text = getString(R.string.nav_hearted);
                 if (switchView.isChecked())
                     switchView.setChecked(false);
                 else
                     switchView.setChecked(true);
 
-            } else if (id == nav_bar) {
-                text = "bar";
+            } else if (id == nav_favourite) {
+                text = getString(R.string.nav_favourite);
                 if (switchView.isChecked())
                     switchView.setChecked(false);
                 else
                     switchView.setChecked(true);
-            } else if (id == nav_pool) {
-                text = "pool";
+            } else if (id == nav_poem) {
+                text = getString(R.string.nav_poems);
                 if (switchView.isChecked())
                     switchView.setChecked(false);
                 else
                     switchView.setChecked(true);
-            }
-        }else {
+            } else if (id == nav_story) {
+            text = getString(R.string.nav_story);
+            if (switchView.isChecked())
+                switchView.setChecked(false);
+            else
+                switchView.setChecked(true);
+        }
+        } else {
             text = "close";
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.END);
         }
         Toast.makeText(this, "You have chosen " + text, Toast.LENGTH_LONG).show();
-  //      DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //      DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-     //   drawer.closeDrawer(GravityCompat.END);
+        //   drawer.closeDrawer(GravityCompat.END);
         return true;
     }
 }

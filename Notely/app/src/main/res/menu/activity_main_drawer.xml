@@ -5,7 +5,7 @@
     <item
         android:id="@+id/nav_close"
         android:checkable="true"
-        android:title="FILTER"
+        android:title="@string/nav_filter"
         app:actionLayout="@layout/close_icon"
         app:showAsAction="ifRoom|withText"
 
@@ -13,30 +13,39 @@
     </group>
     <group android:checkableBehavior="all">
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_hearted"
             android:checkable="true"
-            android:title="Home"
+            android:title="@string/nav_hearted"
             app:actionLayout="@layout/checkbox"
             app:showAsAction="ifRoom|withText"
 
             />
         <item
-            android:id="@+id/nav_bar"
+            android:id="@+id/nav_favourite"
 
-            android:title="Bar"
+            android:title="@string/nav_favourite"
             android:checkable="true"
             app:actionLayout="@layout/checkbox"
             app:showAsAction="ifRoom|withText"/>
             <!--app:actionViewClass="android.widget.CheckBox"-->
 
         <item
-            android:id="@+id/nav_pool"
+            android:id="@+id/nav_poem"
 
-            android:title="Pool"
+            android:title="@string/nav_poems"
             android:checkable="true"
             app:actionLayout="@layout/checkbox"
             app:showAsAction="ifRoom|withText"/>
             <!--app:actionViewClass="android.widget.CheckBox"-->
+
+        <item
+            android:id="@+id/nav_story"
+
+            android:title="@string/nav_story"
+            android:checkable="true"
+            app:actionLayout="@layout/checkbox"
+            app:showAsAction="ifRoom|withText"/>
+        <!--app:actionViewClass="android.widget.CheckBox"-->
 
     </group>
 

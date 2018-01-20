@@ -5,4 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="nav_hearted">Hearted</string>
+    <string name="nav_favourite">Favourite</string>
+    <string name="nav_poems">Poems</string>
+    <string name="nav_story">Story</string>
+    <string name="nav_filter">FILTER</string>
 </resources>

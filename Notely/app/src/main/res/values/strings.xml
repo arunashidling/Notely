@@ -32,9 +32,13 @@
 
     <string name="resolve_edit">Edit note</string>
     <string name="resolve_title">Edit title</string>
+    <string name="view_note">View note</string>
 
     <string name="error_title">Error</string>
     <string name="error_message">Error loading note</string>
     <string name="nothing_to_save">There is nothing to save</string>
     <string name="title_activity_note_reader">NoteReaderActivity</string>
+
+    <string name="edit">Edit</string>
+    <string name="lastupdated">Last updated: </string>
 </resources>

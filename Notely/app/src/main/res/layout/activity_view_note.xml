@@ -1,13 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.pe.notes.ui.ViewNoteActivity">
+    android:orientation="vertical"
+    android:background="@color/header_gary"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@color/header_gary">
+        <ImageButton
+            android:id="@+id/viewback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_arrow_back_black_18px"
+            android:layout_alignParentLeft="true"/>
+
+        <Button
+            android:id="@+id/viewedit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit"
+            android:layout_alignParentRight="true"
+            android:textAllCaps="true"
+            android:background="@android:color/transparent"/>
+
+        <TextView
+            android:id="@+id/headerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:text="And then there were none"
+            android:layout_below="@id/viewedit"
+            android:layout_marginTop="15dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+
+        <TextView
+            android:id="@+id/dateview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:textStyle="bold"
+            android:layout_below="@id/headerview"
+            android:text="@string/lastupdated"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/darker_gray"
+            />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        >
+
+        <TextView
+            android:id="@+id/noteview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fadingEdge="vertical"
+            android:gravity="top"
+            android:padding="5dp"
+            android:scrollbars="vertical"
+            android:textColor="@color/note_text"
+
+            android:background="@android:color/transparent"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:typeface="serif"
+            android:textSize="20sp"
+          />
+
+    </ScrollView>
 
 
 
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

@@ -52,7 +52,7 @@
                  a single note
             -->
             <intent-filter android:label="@string/resolve_edit">
-                <action android:name="android.intent.action.VIEW"/>
+
                 <action android:name="android.intent.action.EDIT"/>
                 <action android:name="com.android.notepad.action.EDIT_NOTE"/>
 
@@ -78,8 +78,16 @@
         </activity>
         <activity
             android:name=".ViewNoteActivity"
-            android:label="@string/title_activity_note_reader"
+
             android:theme="@style/AppTheme.NoActionBar">
+
+            <intent-filter android:label="@string/view_note">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:mimeType="vnd.android.cursor.item/vnd.google.note"/>
+            </intent-filter>
+
         </activity>
     </application>
 

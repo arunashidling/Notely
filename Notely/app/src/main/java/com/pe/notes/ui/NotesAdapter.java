@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -70,7 +71,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         final Notes note = mNotesList.get(position);
         holder.mHeader.setText(note.getmHeader());
         holder.mSubHeading.setText(note.getmSubHeading());
-        holder.mDate.setText(note.getmDate());
+        try {
+            holder.mDate.setText(CommonUtils.formatToYesterdayOrToday(note.getmDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         if(note.getmFavourite() == 1) {
             holder.mFav.setChecked(true);

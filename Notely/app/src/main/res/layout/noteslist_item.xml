@@ -31,6 +31,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="5dip"
             android:maxLines="1"
+            android:typeface="serif"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             />
@@ -42,6 +43,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="5dip"
             android:maxLines="1"
+            android:typeface="serif"
             android:text="Testing 1234 "
             />
 
@@ -52,6 +54,7 @@
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
             android:paddingLeft="5dip"
+            android:typeface="serif"
             android:text="Jan 2, 20:00"/>
 
 
@@ -69,7 +72,7 @@
             android:id="@+id/star"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@drawable/start_gray"
+            android:button="@drawable/start_yello"
 
             />
 

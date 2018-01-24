@@ -3,6 +3,11 @@ package com.pe.notes.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -66,6 +71,26 @@ public class CommonUtils {
 
     }
 
+    public static String formatToYesterdayOrToday(long time) throws ParseException {
+        Date date = new Date(time);
+        String dateTime = new SimpleDateFormat("EEE hh:mma MMM d, yyyy").format(date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        Calendar today = Calendar.getInstance();
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DATE, -1);
+        DateFormat timeFormatter = new SimpleDateFormat("hh:mm a");
+
+        if (calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
+            return "Today at " + timeFormatter.format(date);
+        } else if (calendar.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == yesterday.get(Calendar.DAY_OF_YEAR)) {
+            return "Yesterday at " + timeFormatter.format(date);
+        } else {
+            timeFormatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a");
+            return  timeFormatter.format(date);
+
+        }
+    }
 
 
 

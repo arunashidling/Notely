@@ -3,8 +3,7 @@
     <color name="colorPrimary">#938268</color>
     <color name="colorPrimaryDark">#494131</color>
     <color name="colorAccent">#314941</color>
-    <color name="header_gary">#F2F2F2</color>
-    <color name="sub_heading">#d9d9d9</color>
-    <color name="sub_heading2">#f3f3f3</color>
+    <color name="header_gary">#F3F3F3</color>
     <color name="note_text">#484848</color>
+    <color name="text_blue">#36b1e5</color>
 </resources>

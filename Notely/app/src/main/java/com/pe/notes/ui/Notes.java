@@ -6,8 +6,9 @@ package com.pe.notes.ui;
 
 public class Notes {
     private long id;
-    private String mHeader, mSubHeading, mDate;
+    private String mHeader, mSubHeading;
     private int mFavourite, mStar;
+    private long mDate;
 
     public Notes(){
 
@@ -21,7 +22,7 @@ public class Notes {
         this.id = id;
     }
 
-    public Notes(String mHeader, String mSubHeading, String mDate, int mFavourite,
+    public Notes(String mHeader, String mSubHeading, long mDate, int mFavourite,
                  int mStar, long id){
         this.id = id;
         this.mHeader = mHeader;
@@ -48,11 +49,11 @@ public class Notes {
         this.mSubHeading = mSubHeading;
     }
 
-    public String getmDate() {
+    public long getmDate() {
         return mDate;
     }
 
-    public void setmDate(String mDate) {
+    public void setmDate(long mDate) {
         this.mDate = mDate;
     }
 

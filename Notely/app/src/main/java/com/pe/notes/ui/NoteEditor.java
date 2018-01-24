@@ -31,6 +31,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -216,9 +217,24 @@ public class NoteEditor extends Activity {
             @Override
             public void onClick(View view) {
                 onBackPressed();
+                finish();
             }
         });
 
+        mText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mText.setCursorVisible(true);
+            }
+        });
+
+        mHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mHeader.setCursorVisible(true);
+            }
+        });
 
         /*
          * If this Activity had stopped previously, its state was written the ORIGINAL_CONTENT

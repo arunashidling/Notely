@@ -1,5 +1,7 @@
 package com.pe.notes.ui;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,8 +17,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.text.ParseException;
 
-public class ViewNoteActivity extends AppCompatActivity {
+
+public class ViewNoteActivity extends Activity {
     Button edit;
     ImageButton back;
     TextView note,date, header;
@@ -38,6 +42,7 @@ public class ViewNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         final Intent intent = getIntent();
+
 
         /*
          *  Sets up for the edit, based on the action specified for the incoming Intent.
@@ -80,6 +85,9 @@ public class ViewNoteActivity extends AppCompatActivity {
         );
 
 
+      //  getActionBar().show();
+
+
 
         setContentView(R.layout.activity_view_note);
         edit = (Button) findViewById(R.id.viewedit);
@@ -97,6 +105,14 @@ public class ViewNoteActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_EDIT, mUri);
 
                 startActivity(intent);
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+                finish();
             }
         });
 
@@ -126,8 +142,12 @@ public class ViewNoteActivity extends AppCompatActivity {
             note.setText(noteText);
 
             int colDateIndex = mCursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE);
-            String notedate = mCursor.getString(colDateIndex);
-            date.setText(notedate);
+            long notedate = mCursor.getLong(colDateIndex);
+            try {
+                date.setText(CommonUtils.formatToYesterdayOrToday(notedate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
         }
     }

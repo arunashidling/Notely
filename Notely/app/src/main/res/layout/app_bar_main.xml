@@ -8,6 +8,7 @@
     android:fitsSystemWindows="true"
     tools:context="com.pe.notes.ui.MainActivity">
 
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +46,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:padding="20dp"
-
+                    android:layout_marginRight="15dp"
                     android:background="@drawable/ic_filter_list_black_24px"/>
             </RelativeLayout>
 
@@ -58,12 +59,12 @@
 
 
 
-    <android.support.design.widget.FloatingActionButton
+    <ImageButton
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        style="@style/FAB.Accent"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_add"/>
 
 </android.support.design.widget.CoordinatorLayout>

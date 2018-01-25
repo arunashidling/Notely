@@ -26,14 +26,15 @@ import static android.app.Activity.RESULT_OK;
  * Created by aruna on 22/01/18.
  */
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder>  {
+public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder>   {
 
     private List<Notes> mNotesList;
     public Context mContext;
     public Uri data;
 
 
-    public class NotesViewHolder extends RecyclerView.ViewHolder {
+
+    public class NotesViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener{
         public TextView mHeader, mSubHeading, mDate;
 
         public LinearLayout mcontentPanel;
@@ -48,10 +49,47 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             mSubHeading = (TextView) view.findViewById(R.id.subheading);
             mDate = (TextView) view.findViewById(R.id.date);
             mFav = (CheckBox) view.findViewById(R.id.fav);
+            mFav.setOnCheckedChangeListener(this);
             mStar = (CheckBox) view.findViewById(R.id.star);
             mcontentPanel = (LinearLayout) view.findViewById(R.id.contentPanel);
             viewForeground = (RelativeLayout) view.findViewById(R.id.view_foreground);
             viewBackground = (RelativeLayout) view.findViewById(R.id.view_background);
+
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            switch (compoundButton.getId()){
+                case R.id.fav:
+                    Notes note = (Notes) compoundButton.getTag();
+                    if(compoundButton.isChecked()){
+                        compoundButton.setButtonDrawable(R.drawable.heart_red);
+                        if(note != null)
+                           note.setmFavourite(1);
+                    }else{
+                        compoundButton.setButtonDrawable(R.drawable.heart_gray);
+                        if(note != null)
+                           note.setmFavourite(0);
+                    }
+                    if(note != null)
+                        updateNote(note);
+                    break;
+                case R.id.star:
+                    Notes sNote = (Notes) compoundButton.getTag();
+                    if(compoundButton.isChecked()){
+                        compoundButton.setButtonDrawable(R.drawable.start_yello);
+                        if(sNote != null)
+                           sNote.setmStar(1);
+                    }else{
+                        compoundButton.setButtonDrawable(R.drawable.start_gray);
+                        if(sNote != null)
+                            sNote.setmStar(0);
+                    }
+                    if(sNote != null)
+                        updateNote(sNote);
+                    break;
+
+            }
 
         }
     }
@@ -84,8 +122,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         }
 
         if(note.getmFavourite() == 1) {
+
             holder.mFav.setChecked(true);
             holder.mFav.setButtonDrawable(R.drawable.heart_red);
+
         }
         else {
             holder.mFav.setChecked(false);
@@ -102,7 +142,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             holder.mStar.setChecked(false);
             holder.mStar.setButtonDrawable(R.drawable.start_gray);
         }
+
         holder.mStar.setTag(note);
+        holder.mFav.setOnCheckedChangeListener(holder);
+        holder.mStar.setOnCheckedChangeListener(holder);
 
         holder.mcontentPanel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,39 +158,18 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             }
         });
 
-        holder.mFav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Notes note = (Notes) compoundButton.getTag();
-                if(compoundButton.isChecked()){
-                    compoundButton.setButtonDrawable(R.drawable.heart_red);
-                    note.setmFavourite(1);
-                }else{
-                    compoundButton.setButtonDrawable(R.drawable.heart_gray);
-                    note.setmFavourite(0);
-                }
 
-                updateNote(note);
-            }
-        });
-
-
-        holder.mStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Notes note = (Notes) compoundButton.getTag();
-                if(compoundButton.isChecked()){
-                    compoundButton.setButtonDrawable(R.drawable.start_yello);
-                    note.setmStar(1);
-                }else{
-                    compoundButton.setButtonDrawable(R.drawable.start_gray);
-                    note.setmStar(0);
-                }
-
-                updateNote(note);
-            }
-        });
     }
+
+    @Override
+    public void onViewRecycled(NotesViewHolder holder) {
+        super.onViewRecycled(holder);
+
+        holder.mFav.setOnCheckedChangeListener(null);
+        holder.mStar.setOnCheckedChangeListener(null);
+    }
+
+
 
     private void updateNote(Notes note) {
                // Sets up a map to contain values to be updated in the provider.
@@ -165,6 +187,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
 
     }
+
+
 
     @Override
     public int getItemCount() {

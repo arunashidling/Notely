@@ -1,4 +1,4 @@
-package com.pe.notes.ui;
+package com.pe.notes.com.pe.notes.util;
 
 /**
  * Created by aruna on 22/01/18.

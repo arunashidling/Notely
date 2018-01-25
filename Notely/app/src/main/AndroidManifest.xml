@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <provider
-            android:name=".NotePadProvider"
+            android:name="com.pe.notes.db.NotePadProvider"
             android:authorities="com.google.provider.NotePad"
             android:exported="false">
             <grant-uri-permission android:pathPattern=".*"/>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pe.notes.ui;
+package com.pe.notes.db;
 
 import android.content.ClipDescription;
 import android.content.ContentProvider;
@@ -33,7 +33,6 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.provider.ContactsContract;
 import android.provider.LiveFolders;
 import android.text.TextUtils;
 import android.util.Log;

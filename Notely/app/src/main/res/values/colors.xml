@@ -5,5 +5,8 @@
     <color name="colorAccent">#314941</color>
     <color name="header_gary">#F3F3F3</color>
     <color name="note_text">#484848</color>
-    <color name="text_blue">#36b1e5</color>
+    <color name="subheader">#808080</color>
+    <color name="subsmall">#A9A9A9</color>
+    <color name="menu_green">#32CD32</color>
+    <color name="white">#FFFFFF</color>
 </resources>

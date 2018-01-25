@@ -1,5 +1,6 @@
 package com.pe.notes.ui;
 
+import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -24,7 +26,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by aruna on 22/01/18.
  */
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
+public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder>  {
 
     private List<Notes> mNotesList;
     public Context mContext;
@@ -36,6 +38,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
         public LinearLayout mcontentPanel;
         public CheckBox mFav, mStar;
+        public RelativeLayout viewBackground;
+        public RelativeLayout  viewForeground;
 
 
         public NotesViewHolder(View view) {
@@ -46,6 +50,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             mFav = (CheckBox) view.findViewById(R.id.fav);
             mStar = (CheckBox) view.findViewById(R.id.star);
             mcontentPanel = (LinearLayout) view.findViewById(R.id.contentPanel);
+            viewForeground = (RelativeLayout) view.findViewById(R.id.view_foreground);
+            viewBackground = (RelativeLayout) view.findViewById(R.id.view_background);
 
         }
     }
@@ -165,5 +171,24 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return mNotesList.size();
     }
 
+    public void removeItem(int position) {
+        deleteNote(mNotesList.get(position));
+        mNotesList.remove(position);
+        notifyItemRemoved(position);
+    }
 
+    public void restoreItem(Notes item, int position) {
+        mNotesList.add(position, item);
+        // notify item added by position
+        notifyItemInserted(position);
+    }
+
+    private final void deleteNote(Notes notes) {
+        Uri mUri = ContentUris.withAppendedId(data, notes.getId());
+        mContext.getContentResolver().delete(mUri, null, null);
+
+    }
 }
+
+
+

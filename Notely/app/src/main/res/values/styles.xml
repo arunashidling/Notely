@@ -19,14 +19,4 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
 
-    <style name="FAB">
-        <item name="android:layout_width">@dimen/floating_action_button_size</item>
-        <item name="android:layout_height">@dimen/floating_action_button_size</item>
-    </style>
-
-
-    <style name="FAB.Accent">
-        <item name="android:background">@drawable/fab_accent_normal</item>
-    </style>
-
 </resources>

@@ -26,8 +26,6 @@
         android:fitsSystemWindows="true"
         android:background="#FF000000"
         app:itemTextColor="#FFFFFF"
-
-
         app:menu="@menu/activity_main_drawer" >
 
         <RelativeLayout

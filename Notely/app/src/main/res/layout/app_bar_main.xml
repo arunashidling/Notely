@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+                                                 android:background="#FFFFFF"
     android:fitsSystemWindows="true"
     tools:context="com.pe.notes.ui.MainActivity">
 
@@ -12,14 +12,17 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:background="@color/header_gary"
+
         app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/header_gary"
+
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <RelativeLayout
@@ -48,6 +51,15 @@
                     android:padding="20dp"
                     android:layout_marginRight="15dp"
                     android:background="@drawable/ic_filter_list_black_24px"/>
+
+                <ImageButton
+                    android:id="@+id/menuadd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                   android:layout_toLeftOf="@id/menuRight"
+                    android:padding="20dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/ic_note_add_black_18px"/>
             </RelativeLayout>
 
 
@@ -58,13 +70,5 @@
     <include layout="@layout/content_main" />
 
 
-
-    <ImageButton
-        android:id="@+id/fab"
-        style="@style/FAB.Accent"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="20dp"
-        android:src="@drawable/ic_add"/>
 
 </android.support.design.widget.CoordinatorLayout>

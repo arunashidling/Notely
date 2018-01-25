@@ -1,4 +1,5 @@
 <resources>
+    <string name="brand_name">Notely</string>
     <string name="app_name">Notely</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -12,8 +13,6 @@
     <string name="nav_filter">FILTER</string>
 
 
-    <string name="title_create">New note</string>
-
     <string name="menu_save">Save</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_revert">Revert changes</string>
@@ -26,4 +25,6 @@
 
     <string name="edit">Edit</string>
     <string name="lastupdated">Last updated: </string>
+
+    <string name="delete">Delete</string>
 </resources>

@@ -1,11 +1,15 @@
 package com.pe.notes.ui;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,18 +18,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.pe.notes.ui.R.id.menuadd;
 import static com.pe.notes.ui.R.id.nav_close;
 import static com.pe.notes.ui.R.id.nav_favourite;
 import static com.pe.notes.ui.R.id.nav_hearted;
@@ -34,7 +43,7 @@ import static com.pe.notes.ui.R.id.nav_story;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private List<Notes> mNotesList = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -43,9 +52,10 @@ public class MainActivity extends AppCompatActivity
 
     CoordinatorLayout contentView;
     NavigationView navigationView2;
-    MenuItem navHearted, navStar;
+    MenuItem navHearted, navStar, clearFilter;
     CompoundButton navHeartCheckbox, navStarCheckbox;
-    ImageButton menuRight;
+    ImageView clearFilterClick;
+    ImageButton menuRight, noteAdd;
 
     private static final String[] PROJECTION = new String[]{
             NotePad.Notes._ID, // 0
@@ -57,6 +67,19 @@ public class MainActivity extends AppCompatActivity
             NotePad.Notes.COLUMN_NAME_STAR
     };
 
+    ColorStateList colorStateList = new ColorStateList(
+            new int[][] {
+
+                    new int[] { -android.R.attr.state_checked }, // unchecked
+                    new int[] {  android.R.attr.state_checked }  // checked
+            },
+            new int[] {
+
+                    Color.parseColor("#FFFFFF"),
+                    Color.parseColor("#32CD32")
+            }
+    );
+
     /**
      * The index of the title column
      */
@@ -67,20 +90,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageButton fab = (ImageButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                startActivity(new Intent(Intent.ACTION_INSERT, getIntent().getData()));
-
-            }
-        });
-
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         contentView = (CoordinatorLayout) findViewById(R.id.main_content_view);
 
         menuRight = (ImageButton) findViewById(R.id.menuRight);
+        noteAdd = (ImageButton) findViewById(R.id.menuadd);
 
         navigationView2 = (NavigationView) findViewById(R.id.nav_view2);
         navigationView2.setNavigationItemSelectedListener(this);
@@ -89,14 +103,9 @@ public class MainActivity extends AppCompatActivity
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MenuItem heart = navigationView2.getMenu().findItem(nav_hearted);
-                CompoundButton isHeart = (CompoundButton) MenuItemCompat.getActionView(heart);
 
-                MenuItem star = navigationView2.getMenu().findItem(nav_favourite);
-                CompoundButton isStar = (CompoundButton) MenuItemCompat.getActionView(star);
-
-                CommonUtils.setFilters(getApplicationContext(), isHeart.isChecked(), isStar.isChecked());
-                applyFilter(isHeart.isChecked(), isStar.isChecked());
+                CommonUtils.setFilters(getApplicationContext(), navHeartCheckbox.isChecked(), navStarCheckbox.isChecked());
+                applyFilter(navHeartCheckbox.isChecked(), navStarCheckbox.isChecked());
 
 
                 if (drawer.isDrawerOpen(GravityCompat.END)) {
@@ -105,6 +114,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        noteAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                startActivity(new Intent(Intent.ACTION_INSERT, getIntent().getData()));
+            }
+        });
 
         menuRight.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +132,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
@@ -132,9 +150,39 @@ public class MainActivity extends AppCompatActivity
 
         navHearted = navigationView2.getMenu().findItem(nav_hearted);
         navHeartCheckbox = (CompoundButton) MenuItemCompat.getActionView(navHearted);
+        setTextColorForMenuItem(navHearted,R.color.white);
 
         navStar = navigationView2.getMenu().findItem(nav_favourite);
         navStarCheckbox = (CompoundButton) MenuItemCompat.getActionView(navStar);
+        setTextColorForMenuItem(navStar,R.color.white);
+
+
+
+
+
+        navStarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                    setTextColorForMenuItem(navStar,R.color.menu_green);
+                else
+                    setTextColorForMenuItem(navStar,R.color.white);
+
+                compoundButton.setButtonTintList(colorStateList);
+            }
+        });
+
+        navHeartCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                    setTextColorForMenuItem(navHearted,R.color.menu_green);
+                else
+                    setTextColorForMenuItem(navHearted,R.color.white);
+                compoundButton.setButtonTintList(colorStateList);
+
+            }
+        });
 
         Intent intent = getIntent();
 
@@ -152,6 +200,15 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+    }
+
+    private void setTextColorForMenuItem(MenuItem menuItem, @ColorRes int color) {
+        SpannableString spanString = new SpannableString(menuItem.getTitle().toString());
+        spanString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, color)), 0, spanString.length(), 0);
+        menuItem.setTitle(spanString);
     }
 
     private void applyFilter(boolean isHeartChecked, boolean isStarChecked) {
@@ -174,23 +231,14 @@ public class MainActivity extends AppCompatActivity
             menuRight.setBackgroundResource(R.drawable.ic_filter_list_black_24px);
         }
 
-        QueryNotesFromDb query = new QueryNotesFromDb(where,selection);
+        QueryNotesFromDb query = new QueryNotesFromDb(where, selection);
         query.execute();
-
-      /*  Cursor cursor = managedQuery(
-                getIntent().getData(),            // Use the default content URI for the provider.
-                PROJECTION,                       // Return the note ID and title for each note.
-                where,                             // No where clause, return all records.
-                selection,                             // No where clause, therefore no where column values.
-                NotePad.Notes.DEFAULT_SORT_ORDER  // Use the default sort order.
-        );
-
-        prepareNoteData(cursor);*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
 
         recyclerView.setAdapter(mAdapter);
         boolean isHeartFilter = false;
@@ -210,7 +258,6 @@ public class MainActivity extends AppCompatActivity
         applyFilter(isHeartFilter, isStarFilter);
         navHeartCheckbox.setChecked(isHeartFilter);
         navStarCheckbox.setChecked(isStarFilter);
-        //   prepareNoteData(cursor);
     }
 
     private void prepareNoteData(Cursor cursor) {
@@ -231,8 +278,9 @@ public class MainActivity extends AppCompatActivity
 
 
         }
-        //cursor.close();
         mAdapter.notifyDataSetChanged();
+
+
 
     }
 
@@ -246,12 +294,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -282,8 +330,10 @@ public class MainActivity extends AppCompatActivity
 
             if (id == nav_hearted) {
 
-                if (switchView.isChecked())
+                if (switchView.isChecked()) {
+
                     switchView.setChecked(false);
+                }
                 else
                     switchView.setChecked(true);
 
@@ -302,6 +352,11 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
 
+            /* Reset the filters and fetch all the notes */
+
+            navStarCheckbox.setChecked(false);
+            navHeartCheckbox.setChecked(false);
+            applyFilter(false, false);
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.END);
         }
@@ -310,12 +365,24 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof NotesAdapter.NotesViewHolder) {
+
+            String name = mNotesList.get(viewHolder.getAdapterPosition()).getmHeader();
+            // remove the item from recycler view
+            mAdapter.removeItem(viewHolder.getAdapterPosition());
+
+
+        }
+    }
+
 
     private class QueryNotesFromDb extends AsyncTask<Object, Object, Cursor> {
         String where = null;
         String[] selection = null;
 
-        QueryNotesFromDb(String where, String[] selection){
+        QueryNotesFromDb(String where, String[] selection) {
             this.where = where;
             this.selection = selection;
         }

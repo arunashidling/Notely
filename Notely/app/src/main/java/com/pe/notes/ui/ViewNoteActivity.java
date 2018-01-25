@@ -144,7 +144,7 @@ public class ViewNoteActivity extends Activity {
             int colDateIndex = mCursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE);
             long notedate = mCursor.getLong(colDateIndex);
             try {
-                date.setText(CommonUtils.formatToYesterdayOrToday(notedate));
+                date.setText(getResources().getString(R.string.lastupdated) + CommonUtils.formatToYesterdayOrToday(notedate));
             } catch (ParseException e) {
                 e.printStackTrace();
             }

@@ -29,7 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_margin="10dp">
 
             <Button
                 android:id="@+id/undo"
@@ -38,6 +39,7 @@
                 android:layout_gravity="right"
                 android:background="@color/header_gary"
                 android:text="Undo"
+
                 android:typeface="serif"
                 android:textColor="@color/note_text"
                 />
@@ -49,6 +51,7 @@
                 android:layout_gravity="right"
                 android:background="@color/header_gary"
                 android:text="Save"
+
                 android:typeface="serif"
                 android:textColor="@color/note_text"
                 />
@@ -69,6 +72,7 @@
         android:background="@android:color/transparent"
         android:layout_below="@+id/edit_header"
         android:typeface="serif"
+        android:hint="Enter Note Title"
         android:textSize="25sp"
         android:layout_margin="10dp"/>
     <EditText

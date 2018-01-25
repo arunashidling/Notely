@@ -3,11 +3,11 @@
           package="com.pe.notes.ui">
 
     <application
+        android:label="@string/brand_name"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
         <provider
             android:name=".NotePadProvider"
             android:authorities="com.google.provider.NotePad"
@@ -17,13 +17,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+            android:label="@string/app_name">
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.EDIT"/>
@@ -43,7 +38,7 @@
         </activity>
         <activity
             android:name=".NoteEditor"
-            android:configChanges="keyboardHidden|orientation"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="sensor"
             android:theme="@android:style/Theme.Holo.NoActionBar">
 
@@ -52,7 +47,6 @@
                  a single note
             -->
             <intent-filter android:label="@string/resolve_edit">
-
                 <action android:name="android.intent.action.EDIT"/>
                 <action android:name="com.android.notepad.action.EDIT_NOTE"/>
 
@@ -78,16 +72,22 @@
         </activity>
         <activity
             android:name=".ViewNoteActivity"
-
-            android:theme="@style/AppTheme.NoActionBar">
-
+            android:theme="@android:style/Theme.Holo.NoActionBar">
             <intent-filter android:label="@string/view_note">
                 <action android:name="android.intent.action.VIEW"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
 
                 <data android:mimeType="vnd.android.cursor.item/vnd.google.note"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".NotelySplashScreen"
+                  android:theme="@android:style/Theme.Holo.NoActionBar">>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
     </application>
 

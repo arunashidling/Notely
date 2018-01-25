@@ -6,6 +6,6 @@
            android:layout_height="wrap_content"
 
            android:textColor="#FFFFFF"
-           android:layout_alignParentTop="true"
+           android:layout_alignParentBottom="true"
            android:clickable="true"
            android:buttonTint="@android:color/white" />

@@ -1,41 +1,40 @@
 package com.pe.notes.ui;
 
-import android.app.ListActivity;
-import android.content.ContentUris;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.pe.notes.ui.R.id.bottom;
+import static com.pe.notes.ui.R.id.menuadd;
 import static com.pe.notes.ui.R.id.nav_close;
 import static com.pe.notes.ui.R.id.nav_favourite;
 import static com.pe.notes.ui.R.id.nav_hearted;
@@ -44,7 +43,7 @@ import static com.pe.notes.ui.R.id.nav_story;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private List<Notes> mNotesList = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -53,19 +52,37 @@ public class MainActivity extends AppCompatActivity
 
     CoordinatorLayout contentView;
     NavigationView navigationView2;
-    MenuItem navHearted, navStar;
+    MenuItem navHearted, navStar, clearFilter;
     CompoundButton navHeartCheckbox, navStarCheckbox;
+    ImageView clearFilterClick;
+    ImageButton menuRight, noteAdd;
 
-    private static final String[] PROJECTION = new String[] {
+    private static final String[] PROJECTION = new String[]{
             NotePad.Notes._ID, // 0
             NotePad.Notes.COLUMN_NAME_TITLE, // 1
             NotePad.Notes.COLUMN_NAME_NOTE,
             NotePad.Notes.COLUMN_NAME_CREATE_DATE,
             NotePad.Notes.COLUMN_NAME_FAVOURITE,
+            NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE,
             NotePad.Notes.COLUMN_NAME_STAR
     };
 
-    /** The index of the title column */
+    ColorStateList colorStateList = new ColorStateList(
+            new int[][] {
+
+                    new int[] { -android.R.attr.state_checked }, // unchecked
+                    new int[] {  android.R.attr.state_checked }  // checked
+            },
+            new int[] {
+
+                    Color.parseColor("#FFFFFF"),
+                    Color.parseColor("#32CD32")
+            }
+    );
+
+    /**
+     * The index of the title column
+     */
     private static final int COLUMN_INDEX_TITLE = 1;
 
     @Override
@@ -73,21 +90,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*Snackbar.make(view, "You have chosen mail option", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                startActivity(new Intent(Intent.ACTION_INSERT, getIntent().getData()));
-
-            }
-        });
-
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         contentView = (CoordinatorLayout) findViewById(R.id.main_content_view);
 
-        ImageButton menuRight = (ImageButton) findViewById(R.id.menuRight);
+        menuRight = (ImageButton) findViewById(R.id.menuRight);
+        noteAdd = (ImageButton) findViewById(R.id.menuadd);
 
         navigationView2 = (NavigationView) findViewById(R.id.nav_view2);
         navigationView2.setNavigationItemSelectedListener(this);
@@ -96,14 +103,9 @@ public class MainActivity extends AppCompatActivity
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MenuItem heart = navigationView2.getMenu().findItem(nav_hearted);
-                CompoundButton isHeart = (CompoundButton) MenuItemCompat.getActionView(heart);
 
-                MenuItem star = navigationView2.getMenu().findItem(nav_favourite);
-                CompoundButton isStar = (CompoundButton) MenuItemCompat.getActionView(star);
-
-                CommonUtils.setFilters(getApplicationContext(), isHeart.isChecked(), isStar.isChecked());
-                applyFilter(isHeart.isChecked(),isStar.isChecked());
+                CommonUtils.setFilters(getApplicationContext(), navHeartCheckbox.isChecked(), navStarCheckbox.isChecked());
+                applyFilter(navHeartCheckbox.isChecked(), navStarCheckbox.isChecked());
 
 
                 if (drawer.isDrawerOpen(GravityCompat.END)) {
@@ -112,6 +114,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        noteAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                startActivity(new Intent(Intent.ACTION_INSERT, getIntent().getData()));
+            }
+        });
 
         menuRight.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +132,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
@@ -137,11 +148,41 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
 
-         navHearted = navigationView2.getMenu().findItem(nav_hearted);
-         navHeartCheckbox = (CompoundButton) MenuItemCompat.getActionView(navHearted);
+        navHearted = navigationView2.getMenu().findItem(nav_hearted);
+        navHeartCheckbox = (CompoundButton) MenuItemCompat.getActionView(navHearted);
+        setTextColorForMenuItem(navHearted,R.color.white);
 
         navStar = navigationView2.getMenu().findItem(nav_favourite);
         navStarCheckbox = (CompoundButton) MenuItemCompat.getActionView(navStar);
+        setTextColorForMenuItem(navStar,R.color.white);
+
+
+
+
+
+        navStarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                    setTextColorForMenuItem(navStar,R.color.menu_green);
+                else
+                    setTextColorForMenuItem(navStar,R.color.white);
+
+                compoundButton.setButtonTintList(colorStateList);
+            }
+        });
+
+        navHeartCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                    setTextColorForMenuItem(navHearted,R.color.menu_green);
+                else
+                    setTextColorForMenuItem(navHearted,R.color.white);
+                compoundButton.setButtonTintList(colorStateList);
+
+            }
+        });
 
         Intent intent = getIntent();
 
@@ -159,97 +200,106 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+    }
+
+    private void setTextColorForMenuItem(MenuItem menuItem, @ColorRes int color) {
+        SpannableString spanString = new SpannableString(menuItem.getTitle().toString());
+        spanString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, color)), 0, spanString.length(), 0);
+        menuItem.setTitle(spanString);
     }
 
     private void applyFilter(boolean isHeartChecked, boolean isStarChecked) {
         String where = null;
         String[] selection = null;
-        if(isHeartChecked && isStarChecked){
+        if (isHeartChecked && isStarChecked) {
             where = NotePad.Notes.COLUMN_NAME_FAVOURITE + " =?" + " AND " + NotePad.Notes.COLUMN_NAME_STAR + " =?";
             selection = new String[]{"1", "1"};
-        }else if(isHeartChecked){
+        } else if (isHeartChecked) {
             where = NotePad.Notes.COLUMN_NAME_FAVOURITE + " =?";
             selection = new String[]{"1"};
-        }else if(isStarChecked){
+        } else if (isStarChecked) {
             where = NotePad.Notes.COLUMN_NAME_STAR + " =?";
             selection = new String[]{"1"};
         }
 
-            Cursor cursor = managedQuery(
-                    getIntent().getData(),            // Use the default content URI for the provider.
-                    PROJECTION,                       // Return the note ID and title for each note.
-                    where,                             // No where clause, return all records.
-                    selection,                             // No where clause, therefore no where column values.
-                    NotePad.Notes.DEFAULT_SORT_ORDER  // Use the default sort order.
-            );
+        if (where != null && menuRight != null) {
+            menuRight.setBackgroundResource(R.drawable.ic_filter_list_blue_24px);
+        } else {
+            menuRight.setBackgroundResource(R.drawable.ic_filter_list_black_24px);
+        }
 
-        prepareNoteData(cursor);
+        QueryNotesFromDb query = new QueryNotesFromDb(where, selection);
+        query.execute();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+
         recyclerView.setAdapter(mAdapter);
         boolean isHeartFilter = false;
         boolean isStarFilter = false;
-        if(CommonUtils.getIsFilterApplied(getApplicationContext())){
+        if (CommonUtils.getIsFilterApplied(getApplicationContext())) {
 
             HashMap<String, Boolean> filterMap = new HashMap<>();
             filterMap = CommonUtils.getAppliedFilters(getApplicationContext());
-            if(filterMap.containsKey(CommonUtils.IS_FILTER_HEART_APPLIED)){
-                isHeartFilter =filterMap.get(CommonUtils.IS_FILTER_HEART_APPLIED);
+            if (filterMap.containsKey(CommonUtils.IS_FILTER_HEART_APPLIED)) {
+                isHeartFilter = filterMap.get(CommonUtils.IS_FILTER_HEART_APPLIED);
             }
-            if(filterMap.containsKey(CommonUtils.IS_FILTER_STAR_APPLIED)){
-                isStarFilter =filterMap.get(CommonUtils.IS_FILTER_STAR_APPLIED);
+            if (filterMap.containsKey(CommonUtils.IS_FILTER_STAR_APPLIED)) {
+                isStarFilter = filterMap.get(CommonUtils.IS_FILTER_STAR_APPLIED);
             }
 
         }
         applyFilter(isHeartFilter, isStarFilter);
         navHeartCheckbox.setChecked(isHeartFilter);
         navStarCheckbox.setChecked(isStarFilter);
-     //   prepareNoteData(cursor);
     }
 
     private void prepareNoteData(Cursor cursor) {
         mNotesList.clear();
-        if(cursor != null && cursor.moveToFirst()){
-            do{
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
                 long id = cursor.getLong(cursor.getColumnIndex(NotePad.Notes._ID));
                 String mHeader = cursor.getString(cursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_TITLE));
                 String mSubHeader = cursor.getString(cursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_NOTE));
-                String mDate = cursor.getString(cursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_CREATE_DATE));
+                long mDate = cursor.getLong(cursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE));
                 int mFav = cursor.getInt(cursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_FAVOURITE));
                 int mStar = cursor.getInt(cursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_STAR));
 
                 Notes mNote = new Notes(mHeader, mSubHeader, mDate, mFav, mStar, id);
                 mNotesList.add(mNote);
 
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
 
         }
-        //cursor.close();
         mAdapter.notifyDataSetChanged();
+
+
 
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-         if (drawer.isDrawerOpen(GravityCompat.END)) {
+        if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
             super.onBackPressed();
         }
     }
 
-    @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -280,8 +330,10 @@ public class MainActivity extends AppCompatActivity
 
             if (id == nav_hearted) {
 
-                if (switchView.isChecked())
+                if (switchView.isChecked()) {
+
                     switchView.setChecked(false);
+                }
                 else
                     switchView.setChecked(true);
 
@@ -295,19 +347,72 @@ public class MainActivity extends AppCompatActivity
                 text = getString(R.string.nav_poems);
                 Toast.makeText(this, "Implementation in progress for " + text, Toast.LENGTH_LONG).show();
             } else if (id == nav_story) {
-            text = getString(R.string.nav_story);
+                text = getString(R.string.nav_story);
                 Toast.makeText(this, "Implementation in progress for " + text, Toast.LENGTH_LONG).show();
-        }
+            }
         } else {
 
+            /* Reset the filters and fetch all the notes */
+
+            navStarCheckbox.setChecked(false);
+            navHeartCheckbox.setChecked(false);
+            applyFilter(false, false);
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.END);
         }
 
 
-
         return true;
     }
 
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof NotesAdapter.NotesViewHolder) {
 
+            String name = mNotesList.get(viewHolder.getAdapterPosition()).getmHeader();
+            // remove the item from recycler view
+            mAdapter.removeItem(viewHolder.getAdapterPosition());
+
+
+        }
+    }
+
+
+    private class QueryNotesFromDb extends AsyncTask<Object, Object, Cursor> {
+        String where = null;
+        String[] selection = null;
+
+        QueryNotesFromDb(String where, String[] selection) {
+            this.where = where;
+            this.selection = selection;
+        }
+
+
+        @Override
+        protected Cursor doInBackground(Object... cursors) {
+            Cursor cursor = managedQuery(
+                    getIntent().getData(),            // Use the default content URI for the provider.
+                    PROJECTION,                       // Return the note ID and title for each note.
+                    where,                             // No where clause, return all records.
+                    selection,                             // No where clause, therefore no where column values.
+                    NotePad.Notes.DEFAULT_SORT_ORDER  // Use the default sort order.
+            );
+
+
+            return cursor;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+
+            prepareNoteData(cursor);
+        }
+    }
 }

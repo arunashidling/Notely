@@ -31,6 +31,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -216,9 +218,23 @@ public class NoteEditor extends Activity {
             @Override
             public void onClick(View view) {
                 onBackPressed();
+                finish();
             }
         });
 
+        mText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mText.setCursorVisible(true);
+            }
+        });
+
+        mHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mHeader.setCursorVisible(true);
+            }
+        });
 
         /*
          * If this Activity had stopped previously, its state was written the ORIGINAL_CONTENT
@@ -266,10 +282,7 @@ public class NoteEditor extends Activity {
                 mHeader.setText(title);
                // setTitle(text);
             // Sets the title to "create" for inserts
-            } else if (mState == STATE_INSERT) {
-                mHeader.setText(getText(R.string.title_create));
             }
-
             /*
              * onResume() may have been called after the Activity lost focus (was paused).
              * The user was either editing or creating a note when the Activity paused.
@@ -362,10 +375,9 @@ public class NoteEditor extends Activity {
                  */
             } else if (mState == STATE_EDIT) {
                 // Creates a map to contain the new values for the columns
-                if(!TextUtils.isEmpty(text) && !TextUtils.isEmpty(header))
+               // if(!TextUtils.isEmpty(text) && !TextUtils.isEmpty(header))
                      updateNote(text, header);
-                else
-                    updateNote(text, null);
+
 
             } else if (mState == STATE_INSERT) {
                 updateNote(text, header);
@@ -523,6 +535,9 @@ public class NoteEditor extends Activity {
      */
     private final void updateNote(String text, String title) {
 
+        if(TextUtils.isEmpty(text) && TextUtils.isEmpty(title)){
+            return;
+        }
         // Sets up a map to contain values to be updated in the provider.
         ContentValues values = new ContentValues();
         values.put(NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE, System.currentTimeMillis());
@@ -532,7 +547,7 @@ public class NoteEditor extends Activity {
         if (mState == STATE_INSERT) {
 
             // If no title was provided as an argument, create one from the note text.
-            if (title == null) {
+            if (title.isEmpty()) {
   
                 // Get the note's length
                 int length = text.length();
@@ -618,5 +633,10 @@ public class NoteEditor extends Activity {
             getContentResolver().delete(mUri, null, null);
             mText.setText("");
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 }

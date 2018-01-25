@@ -1,6 +1,5 @@
 package com.pe.notes.ui;
 
-import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,15 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pe.notes.com.pe.notes.util.Notes;
+import com.pe.notes.db.NotePad;
+
 import java.text.ParseException;
 import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by aruna on 22/01/18.

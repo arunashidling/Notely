@@ -21,7 +21,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -30,11 +29,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.pe.notes.com.pe.notes.util.Notes;
+import com.pe.notes.db.NotePad;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.pe.notes.ui.R.id.menuadd;
 import static com.pe.notes.ui.R.id.nav_close;
 import static com.pe.notes.ui.R.id.nav_favourite;
 import static com.pe.notes.ui.R.id.nav_hearted;

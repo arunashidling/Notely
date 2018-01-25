@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pe.notes.ui;
+package com.pe.notes.db;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
